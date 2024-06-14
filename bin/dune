@@ -1,4 +1,0 @@
-(executable
- (public_name inertia_ocaml)
- (name main)
- (libraries inertia_ocaml))

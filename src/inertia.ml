@@ -1,147 +1,101 @@
-let is_ssr_enabled (state : Types.Inertia.t) =
-  match state.ssr_client, state.ssr_url with
+module Types = Types
+
+let create_config = Types.Config.create
+
+let default_config =
+  create_config ~root_template:"./src/html/app.html" ~version:"TODO" ~url:"todo"
+;;
+
+let get_version (request : Dream.request) = Dream.header request "X-Inertia-Version"
+
+let is_inertia_request (request : Dream.request) =
+  Dream.header request "X-Inertia"
+  |> Option.map (String.equal "true")
+  |> Option.value ~default:false
+;;
+
+(** The X-Inertia-Partial-Data header is a comma separated list of the desired props (data) keys that should be returned.
+
+    Example: X-Inertia-Partial-Data: user,posts *)
+let get_partial_data (request : Dream.request) =
+  Dream.header request "X-Inertia-Partial-Data"
+;;
+
+(** The X-Inertia-Partial-Component header includes the name of the component that is being partially reloaded. This is necessary, since partial reloads only work for requests made to the same Page_object component. If the final destination is different for some reason (eg. the user was logged out and is now on the login Page_object), then no partial reloading will occur.
+
+    Example: X-Inertia-Partial-Component: Events *)
+let get_partial_component (request : Dream.request) =
+  Dream.header request "X-Inertia-Partial-Component"
+;;
+
+let is_inertia_partial_request (request : Dream.request) =
+  match get_partial_data request, get_partial_component request with
   | Some _, Some _ -> true
   | _ -> false
 ;;
 
-let enable_ssr (state : Types.Inertia.t) url =
-  { state with ssr_url = Some url; ssr_client = None (* TODO: implement *) }
+let _create_root_template (_request : Dream.request) =
+  let file = Fs.File.read_to_string "./src/html/app.html" |> Result.get_ok in
+
+  print_endline @@ "File: " ^ file;
+  ()
 ;;
 
-let is_inertia_request (request : Dream.request) =
-  match Dream.header request "X-Inertia" with
-  | Some "true" -> true
-  | _ -> false
-;;
+let render_raw ~(component : string) ~(props : Types.Props.t) (request : Dream.request) =
+  let open Types in
+  let url = Dream.target request in
+  let version = get_version request |> Option.value ~default:"TODO" in
 
+  match is_inertia_request request with
+  | true when is_inertia_partial_request request ->
+    `JSON
+      (Page_object.create ~component ~props ~url ~version
+       |> Page_object.to_yojson
+       |> Yojson.Safe.to_string)
+  | true ->
+    `JSON
+      (Page_object.create ~component ~props ~url ~version
+       |> Page_object.to_yojson
+       |> Yojson.Safe.to_string)
+  | _ ->
+    let page_object = Page_object.create ~component ~props ~url ~version in
 
-
-let with_prop (request : Dream.request) key value =
-  (* Retrieve existing properties from the request context *)
-  let props_field = Dream.new_field ~name:Context.context_key_props () in
-
-  let props = Dream.field request props_field in
-
-  let () =
-    match props with
-    | None -> Dream.set_field request props_field [ key, value ]
-    | Some props ->
-      (* Update the properties with the new key-value pair *)
-      let updated_props = (key, value) :: List.remove_assoc key props in
-      (* Set the updated properties back into the request context *)
-      Dream.set_field request props_field updated_props
-  in
-
-  (* Return the updated request *)
-  request
-;;
-
-let with_view_data (request : Dream.request) key value =
-  (* Retrieve existing view data from the request context *)
-  let view_data_field = Dream.new_field ~name:Context.context_key_view_data () in
-
-  let view_data = Dream.field request view_data_field in
-
-  let () =
-    match view_data with
-    | None -> Dream.set_field request view_data_field [ key, value ]
-    | Some view_data ->
-      (* Update the view data with the new key-value pair *)
-      let updated_view_data = (key, value) :: List.remove_assoc key view_data in
-      (* Set the updated view data back into the request context *)
-      Dream.set_field request view_data_field updated_view_data
-  in
-
-  (* Return the updated request *)
-  request
-;;
-
-let render
-  (state : Types.Inertia.t)
-  (request : Dream.request)
-  (component : string)
-  (props : (string * Yojson.Safe.t) list)
-  =
-  let only = ref [] in
-  let partial = Dream.header request "X-Inertia-Partial-Data" in
-
-  let () =
-    match partial with
-    | Some partial
-      when Dream.header request "X-Inertia-Partial-Component" = Some component ->
-      String.split_on_char ',' partial |> List.iter (fun value -> only := value :: !only)
-    | _ -> ()
-  in
-
-  let page : Types.Page.t =
-    Types.Page.create
-      ~component
-      ~props:[]
-      ~url:(Dream.target request)
-      ~version:state.version
-  in
-
-  let () =
-    List.iter
-      (fun (key, value) ->
-        match !only with
-        | [] -> page.props <- (key, value) :: page.props
-        | _ when List.mem key !only -> page.props <- (key, value) :: page.props
-        | _ -> ())
-      state.shared_props
-  in
-
-  let context_props =
-    Dream.field request (Dream.new_field ~name:Context.context_key_props ())
-  in
-
-  let () =
-    match context_props with
-    | Some context_props ->
-      let context_props = List.assoc Context.context_key_props context_props in
-      List.iter
-        (fun (key, value) ->
-          match !only with
-          | [] -> page.props <- (key, value) :: page.props
-          | _ when List.mem key !only -> page.props <- (key, value) :: page.props
-          | _ -> ())
-        context_props
-    | _ -> ()
-  in
-
-  let () =
-    List.iter
-      (fun (key, value) ->
-        match !only with
-        | [] -> page.props <- (key, value) :: page.props
-        | _ when List.mem key !only -> page.props <- (key, value) :: page.props
-        | _ -> ())
-      props
-  in
-
-  if is_inertia_request request then
-    let _js = Yojson.Safe.to_string (Types.Page.to_yojson page) in
-
-    Dream.add_header request "Vary" "Accept" |> ignore;
-    Dream.add_header request "X-Inertia" "true" |> ignore;
-    Dream.add_header request "Content-Type" "application/json" |> ignore;
-  else
-    let view_data =
-      match Dream.field request (Dream.new_field ~name:Context.context_key_view_data ()) with
-      | Some view_data -> List.assoc Context.context_key_view_data view_data
-      | _ -> []
+    let root_template =
+      Fs.File.read_to_string
+        "/Users/ekander/dev/oss/ocaml/inertia_ocaml/src/html/app.html"
+      |> Result.map (fun _file -> Types.Template.create ~title:"Foo" ~page_object ())
+      |> Result.get_ok
     in
 
-    let view_data = ("page", Types.Page.to_yojson page) :: view_data in
-    let context_view_data = Dream.new_field ~name:Context.context_key_view_data () in
+    `HTML (root_template |> Types.Template.to_yojson |> Yojson.Safe.to_string)
+;;
 
-    let () =
-      match Dream.field request context_view_data with
-      | None -> Dream.set_field request context_view_data view_data
-      | Some view_data ->
-        let updated_view_data = List.assoc Context.context_key_view_data view_data in
-        Dream.set_field request context_view_data (("page", Types.Page.to_yojson page) :: updated_view_data)
-    in
+let render ~(component : string) ~(props : Types.Props.t) (request : Dream.request) =
+  match render_raw ~component ~props request with
+  | `HTML html -> Dream.html html
+  | `JSON json -> Dream.json json
+;;
 
-    ()
+let middleware inner_handler (request : Dream.request) ~(config : Types.Config.t) =
+  let _ = config in
+  Dream.log "Inertia middleware";
+
+  let version = get_version request in
+  let partial_data = get_partial_data request in
+  let partial_component = get_partial_component request in
+
+  Dream.log "Version: %s" (Option.value ~default:"" version);
+  Dream.log "Partial data: %s" (Option.value ~default:"" partial_data);
+  Dream.log "Partial component: %s" (Option.value ~default:"" partial_component);
+
+  match is_inertia_request request with
+  | true when is_inertia_partial_request request ->
+    Dream.log "Inertia partial request";
+    inner_handler request
+  | true ->
+    Dream.log "Inertia full request";
+    inner_handler request
+  | _ ->
+    Dream.log "Inertia non request";
+    inner_handler request
 ;;

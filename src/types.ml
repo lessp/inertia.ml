@@ -1,42 +1,30 @@
-module Inertia = struct
+module Config = struct
   type t =
     { url : string
     ; root_template : string
     ; version : string
-    ; shared_props : (string * Yojson.Safe.t) list
-    ; shared_func_map : (string * Yojson.Safe.t) list
-    ; template_fs : In_channel.t option (* TODO: What should we use here. *)
-    ; ssr_url : string option
-    ; ssr_client : (unit -> string) option
     }
+  [@@deriving yojson]
 
-  let create
-    ?template_fs
-    ?ssr_url
-    ?ssr_client
-    ~url
-    ~root_template
-    ~version
-    ~shared_props
-    ~shared_func_map
-    ()
-    =
-    { url
-    ; root_template
-    ; version
-    ; shared_props
-    ; shared_func_map
-    ; template_fs
-    ; ssr_url
-    ; ssr_client
-    }
-  ;;
+  let create ~url ~root_template ~version = { url; root_template; version }
 end
 
-module Page = struct
+module Props = struct
+  type t = (string * Yojson.Safe.t) list
+
+  let to_yojson props = `Assoc (List.map (fun (k, v) -> k, v) props)
+  let of_yojson = function
+    | `Assoc props -> Ok props
+    | _ -> Error "Props.of_yojson: expected an object"
+  ;;
+
+  let create ~props = props
+end
+
+module Page_object = struct
   type t =
     { component : string
-    ; mutable props : (string * Yojson.Safe.t) list
+    ; props : Props.t
     ; url : string
     ; version : string
     }
@@ -45,12 +33,12 @@ module Page = struct
   let create ~component ~props ~url ~version = { component; props; url; version }
 end
 
-module SSR = struct
+module Template = struct
   type t =
-    { head : string list
-    ; body : string
+    { title : string
+    ; page_object : Page_object.t
     }
   [@@deriving yojson]
 
-  let create ~head ~body = { head; body }
+  let create ~title ~page_object () = { title; page_object }
 end

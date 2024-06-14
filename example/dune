@@ -1,0 +1,10 @@
+(executable
+ (public_name inertia_ocaml)
+ (name main)
+ (libraries inertia_ocaml dream))
+
+(rule
+ (target pages.ml)
+ (deps (source_tree client/Pages))
+ (action (with-stdout-to %{null}
+  (run ocaml-crunch -m plain client -o %{target}))))
