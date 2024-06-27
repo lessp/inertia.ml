@@ -1,4 +1,23 @@
-module Page_object = Types.Page_object
+(** Page Object *)
+module PO : sig
+  type t =
+    { component : string
+    ; props : Yojson.Safe.t
+    ; url : string
+    ; version : string
+    }
+
+  (** Serialize a page object to a JSON string *)
+  val serialize : t -> string
+
+  (** Create a new page object *)
+  val create
+    :  component:string
+    -> props:Yojson.Safe.t
+    -> url:string
+    -> version:string
+    -> t
+end
 
 (** Set the root template for Inertia.ml
 
@@ -17,11 +36,9 @@ module Page_object = Types.Page_object
           </body>
         </html>
       |}
-          (Inertia.Page_object.serialize page_object))
+          (Inertia.PO.serialize page_object))
     ]} *)
-val set_root_view : (Page_object.t -> string) -> unit
-
-val middleware : Dream.middleware
+val set_root_view : (PO.t -> string) -> unit
 
 (** Render a component with the given props.
 
