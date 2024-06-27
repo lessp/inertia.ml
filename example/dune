@@ -4,7 +4,18 @@
  (libraries inertia_ocaml dream))
 
 (rule
- (target pages.ml)
- (deps (source_tree client/Pages))
+ (targets root_template.ml)
+ (deps root_template.eml.ml)
+ (action (run dream_eml %{deps} --workspace %{workspace_root})))
+
+(rule
+ (target dist.ml)
+ (deps (source_tree js/dist))
  (action (with-stdout-to %{null}
-  (run ocaml-crunch -m plain client -o %{target}))))
+  (run ocaml-crunch -m plain js/dist -o %{target}))))
+
+; (rule
+;  (target pages.ml)
+;  (deps (source_tree js/src))
+;  (action (with-stdout-to %{null}
+;   (run ocaml-crunch -m plain js/src -o %{target}))))
