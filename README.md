@@ -9,7 +9,7 @@ A simple library to help you build [Inertia.js](https://inertiajs.com/) applicat
 - [x] Custom root view
 - [x] Full template render with passed page object
 - [x] "Inertia" render i.e. sending only the data and let the client handle the rendering
-- [ ] Versioning
+- [-] Versioning - untested
 - [ ] Partial reloads
 - [ ] Allow other web frameworks to be used (currently coupled with Dream)
 
