@@ -1,8 +1,17 @@
+> WIP! Contributions welcome!
+
 # Inertia.ml - Inertia.js for OCaml
 
-> WIP, contributions are welcome!
-
 A simple library to help you build [Inertia.js](https://inertiajs.com/) applications with OCaml.
+
+# TODO
+
+- [x] Custom root view
+- [x] Full template render with passed page object
+- [x] "Inertia" render i.e. sending only the data and let the client handle the rendering
+- [ ] Versioning
+- [ ] Partial reloads
+- [ ] Allow other web frameworks to be used (currently coupled with Dream)
 
 # Usage
 
@@ -45,12 +54,3 @@ let () =
 ```
 
 See [example](./example) for a full example.
-
-# TODO
-
-- [x] Custom root view
-- [x] Full template render with passed page object
-- [x] "Inertia" render i.e. sending only the data and let the client handle the rendering
-- [ ] Versioning
-- [ ] Partial reloads
-- [ ] Allow other web frameworks to be used (currently coupled with Dream)
