@@ -67,13 +67,13 @@ let render ~component ~props ~request =
     (* Only send JSON *)
     Dream.log "Sending page object as JSON";
 
-    PO.create ~component ~props ~url ~version:"TODO"
+    PO.create ~component ~props ~url ~version
     |> PO.serialize
     |> Dream.json ~headers:[ "Vary", "X-Inertia"; "X-Inertia", "true" ]
   | `Partial (partial_component, _partial_data) ->
     Dream.log "Sending partial page object as JSON";
 
-    PO.create ~component:partial_component ~props ~url ~version:"TODO"
+    PO.create ~component:partial_component ~props ~url ~version
     |> PO.serialize
     |> Dream.json ~headers:[ "Vary", "X-Inertia"; "X-Inertia", "true" ]
 ;;
