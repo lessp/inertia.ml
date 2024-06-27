@@ -1,9 +1,6 @@
 import { Link } from "@inertiajs/react";
 
-export default function (props) {
-  console.log("Show.jsx", props);
-  const { event } = props;
-
+export default function ({ event }) {
   return (
     <div>
       <h1>Event</h1>

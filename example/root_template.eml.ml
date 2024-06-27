@@ -1,4 +1,4 @@
-let render ~page_object () =
+let render page_object =
 <html lang="en">
   <head>
     <meta charset="UTF-8">

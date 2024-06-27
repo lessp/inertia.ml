@@ -1,4 +1,4 @@
-module Types = Types
+module Page_object = Types.Page_object
 
 let root_view_config = ref (fun _ -> "")
 
@@ -44,11 +44,13 @@ let set_root_view (root_view : Types.Page_object.t -> string) =
 ;;
 
 let render ~component ~props ~request =
+  let props = `Assoc props in
   let url = Dream.target request in
   let version = "TODO" in
 
   match Utils.classify_request request with
   | `Full ->
+    (* Send full HTML response *)
     Dream.log "Sending full HTML response with page object";
 
     Dream.html
@@ -58,12 +60,12 @@ let render ~component ~props ~request =
     Dream.log "Sending page object as JSON";
 
     Types.Page_object.create ~component ~props ~url ~version:"TODO"
-    |> Types.Page_object.to_string
+    |> Types.Page_object.serialize
     |> Dream.json ~headers:[ "Vary", "X-Inertia"; "X-Inertia", "true" ]
   | `Partial (partial_component, _partial_data) ->
     Dream.log "Sending partial page object as JSON";
 
     Types.Page_object.create ~component:partial_component ~props ~url ~version:"TODO"
-    |> Types.Page_object.to_string
+    |> Types.Page_object.serialize
     |> Dream.json ~headers:[ "Vary", "X-Inertia"; "X-Inertia", "true" ]
 ;;

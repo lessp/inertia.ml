@@ -1,8 +1,6 @@
 import { Link } from "@inertiajs/react";
 
 export default function () {
-  console.log("Welcome.jsx");
-
   return (
     <div>
       <h1>Welcome</h1>

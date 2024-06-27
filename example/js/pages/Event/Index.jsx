@@ -1,12 +1,10 @@
 import { Link } from "@inertiajs/react";
 
-export default function (props) {
-  console.log("Index.jsx", props);
-
+export default function ({ events }) {
   return (
     <div>
       <h1>Events</h1>
-      {props.events.map((event) => (
+      {events.map((event) => (
         <div key={event.id}>
           <p>{event.title}</p>
           <p>{event.description}</p>

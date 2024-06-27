@@ -1,6 +1,6 @@
 (library
- (name inertia_ocaml)
+ (name inertia_ml)
  (wrapped false)
  (preprocess
   (pps ppx_deriving.show ppx_deriving.ord ppx_deriving_yojson))
- (libraries fs dream yojson))
+ (libraries dream yojson))

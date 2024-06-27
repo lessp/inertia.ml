@@ -1,21 +1,24 @@
 (executable
- (public_name inertia_ocaml)
- (name main)
- (libraries inertia_ocaml dream))
+ (public_name inertia_ml)
+ (name app)
+ (libraries inertia_ml dream))
 
+; This takes the root_template.eml.ml file and generates the root_template.ml file 
 (rule
  (targets root_template.ml)
  (deps root_template.eml.ml)
  (action (run dream_eml %{deps} --workspace %{workspace_root})))
 
+; This generates a dist.ml file (using ocaml-crunch) to load files from the `js/dist` directory. 
+; It has the following signature:
+; sig
+;   val file_list : string list
+;   val read : string -> string option
+;   val hash : string -> string option
+;   val size : string -> int option
+; end
 (rule
  (target dist.ml)
  (deps (source_tree js/dist))
  (action (with-stdout-to %{null}
   (run ocaml-crunch -m plain js/dist -o %{target}))))
-
-; (rule
-;  (target pages.ml)
-;  (deps (source_tree js/src))
-;  (action (with-stdout-to %{null}
-;   (run ocaml-crunch -m plain js/src -o %{target}))))
