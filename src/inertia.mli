@@ -12,7 +12,7 @@ module Page_object = Types.Page_object
             <title>My App</title>
           </head>
           <body>
-            <div id="app" data-page='%s' ></div>
+            <div id="app" data-page='%s'></div>
             <script type="module" src="/assets/bundle.js"></script>
           </body>
         </html>
