@@ -8,6 +8,6 @@ let render page_object =
   </head>
   <body>
   <div id="app" data-page='<%s page_object %>'></div>
-    <script type="module" src="/assets/bundle.js"></script>
+  <script type="module" src="/assets/bundle.js"></script>
   </body>
 </html>
