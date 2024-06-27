@@ -44,13 +44,13 @@ let () =
 ;;
 ```
 
-See [example](./example/app.ml) for a full example.
+See [example](./example) for a full example.
 
 # TODO
 
 - [x] Custom root view
 - [x] Full template render with passed page object
 - [x] "Inertia" render i.e. sending only the data and let the client handle the rendering
-- [] Versioning
-- [] Partial reloads
-- [] Allow other web frameworks to be used (currently coupled with Dream)
+- [ ] Versioning
+- [ ] Partial reloads
+- [ ] Allow other web frameworks to be used (currently coupled with Dream)
