@@ -12,7 +12,7 @@ module PO = struct
   let create ~component ~props ~url ~version = { component; props; url; version }
 end
 
-let root_view_config = ref (fun _ -> "")
+let root_view_template_fn = ref (fun _ -> "")
 
 module Utils = struct
   let get_partial_component (request : Dream.request) =
@@ -50,7 +50,7 @@ module Utils = struct
   let hash (input : string) : string = Digest.to_hex (Digest.string input)
 end
 
-let set_root_view (root_view : PO.t -> string) = root_view_config := root_view
+let set_root_view (root_view : PO.t -> string) = root_view_template_fn := root_view
 
 let render ~component ~props ~request =
   let props = `Assoc props in
@@ -62,7 +62,7 @@ let render ~component ~props ~request =
     (* Send full HTML response *)
     Dream.log "Sending full HTML response with page object";
 
-    Dream.html @@ !root_view_config (PO.create ~component ~props ~url ~version)
+    Dream.html @@ !root_view_template_fn (PO.create ~component ~props ~url ~version)
   | `Inertia ->
     (* Only send JSON *)
     Dream.log "Sending page object as JSON";
