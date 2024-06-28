@@ -1,5 +1,4 @@
-(** Page Object *)
-module PO : sig
+module Page_object : sig
   type t =
     { component : string
     ; props : Yojson.Safe.t
@@ -38,7 +37,7 @@ end
       |}
           (Inertia.PO.serialize page_object))
     ]} *)
-val set_root_view : (PO.t -> string) -> unit
+val set_root_view : (Page_object.t -> string) -> unit
 
 (** Render a component with the given props.
 

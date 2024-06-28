@@ -1,5 +1,5 @@
 Inertia.set_root_view (fun page_object ->
-  Root_template.render (Inertia.PO.serialize page_object))
+  Root_template.render (Inertia.Page_object.serialize page_object))
 
 (* Loads assets from the `js/dist` directory. *)
 let asset_loader _root path _request =
