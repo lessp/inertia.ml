@@ -1,8 +1,8 @@
 > WIP, API will most definitely change!
 
-# Inertia.ml - Inertia.js for OCaml
+# Inertia.ml - Inertia.js adapter for OCaml
 
-A simple library to help you build [Inertia.js](https://inertiajs.com/) applications with OCaml.
+[Inertia.js](https://inertiajs.com/) adapter for OCaml.
 
 # TODO
 

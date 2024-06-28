@@ -2,17 +2,24 @@
 (name inertia_ml)
 (generate_opam_files true)
 (source
- (github username/reponame))
-(authors "Author Name")
-(maintainers "Maintainer Name")
+ (github lessp/inertia.ml))
+(authors "lessp")
+(maintainers "lessp")
 (license LICENSE)
-(documentation https://url/to/documentation)
+(documentation https://github.com/lessp/inertia.ml)
 
 (package
  (name inertia_ml)
- (synopsis "A short synopsis")
- (description "A longer description")
- (depends ocaml dune)
+ (synopsis "Inertia.js adapter for OCaml")
+ (description "Inertia.js adapter for OCaml")
+ (depends 
+   ocaml 
+   dune
+
+   dream
+   yojson
+
+   (alcotest :with-test))
  (tags
   (topics "to describe" your project)))
 
