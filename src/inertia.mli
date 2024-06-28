@@ -20,6 +20,7 @@ end
 
 (** Set the root template for Inertia.ml
 
+    Example:
     {[
       Inertia.set_root_view (fun page_object ->
         Printf.sprintf

@@ -81,14 +81,14 @@ let render ~component ~(props : (string * Yojson.Safe.t) list) ~request =
     Page_object.create ~component ~props:yojson_props ~url ~version
     |> Page_object.serialize
     |> Dream.json ~headers:[ "Vary", "X-Inertia"; "X-Inertia", "true" ]
-  | `Partial (partial_component, partial_data) ->
+  | `Partial (component, props_list) ->
     Dream.log "Sending partial page object as JSON";
 
     let partial_props =
-      `Assoc (props |> List.filter (fun (key, _) -> List.mem key partial_data))
+      `Assoc (props |> List.filter (fun (key, _) -> props_list |> List.mem key))
     in
 
-    Page_object.create ~component:partial_component ~props:partial_props ~url ~version
+    Page_object.create ~component ~props:partial_props ~url ~version
     |> Page_object.serialize
     |> Dream.json ~headers:[ "Vary", "X-Inertia"; "X-Inertia", "true" ]
 ;;
