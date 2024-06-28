@@ -33,7 +33,7 @@ Inertia.set_root_view (fun page_object -> Printf.sprintf {|
     <script type="module" src="/assets/bundle.js"></script>
 </body>
 </html>
-|} (Inertia.PO.serialize page_object))
+|} (Inertia.Page_object.serialize page_object))
 ```
 
 2. Calling Inertia
