@@ -36,7 +36,7 @@ end
           </body>
         </html>
       |}
-          (Inertia.PO.serialize page_object))
+          (Inertia.Page_object.serialize page_object))
     ]} *)
 val set_root_view : (Page_object.t -> string) -> unit
 
