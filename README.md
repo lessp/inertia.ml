@@ -1,4 +1,4 @@
-> WIP, API will most definitely change!
+> WIP, contributions welcome!
 
 # Inertia.ml - Inertia.js adapter for OCaml
 
