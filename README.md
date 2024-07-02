@@ -54,4 +54,4 @@ let () =
 ;;
 ```
 
-See [example](./example) for a full example.
+See [example](./example) for a full example using Inertia.ml with Svelte.

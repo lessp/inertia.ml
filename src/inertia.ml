@@ -36,12 +36,6 @@ let config =
   }
 ;;
 
-let get_partial_component (request : Dream.request) =
-  match Dream.header request "X-Inertia-Partial-Component" with
-  | Some component -> component
-  | None -> ""
-;;
-
 let get_partial_data (request : Dream.request) =
   match Dream.header request "X-Inertia-Partial-Data" with
   | Some data -> String.split_on_char ',' data
@@ -54,7 +48,7 @@ let classify_request (request : Dream.request) =
   | Some _ ->
     (match Dream.header request "X-Inertia-Partial-Component" with
      | None -> `Inertia
-     | Some _ -> `Partial (get_partial_component request, get_partial_data request))
+     | Some component -> `Partial (component, get_partial_data request))
 ;;
 
 let set_root_view (root_view : Page_object.t -> string) =

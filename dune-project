@@ -17,9 +17,7 @@
    dune
 
    dream
-   yojson
-
-   (alcotest :with-test))
+   yojson)
  (tags
   (topics "to describe" your project)))
 
