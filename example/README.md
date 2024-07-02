@@ -13,7 +13,7 @@ bun run build
 
 # Install OCaml dependencies
 cd ..
-dune b && dune exec ./main.exe
+dune b && dune exec ./app.exe
 ```
 
 Assets are bundled with `dune` from `js/dist` folder. See [`asset_loader`](./app.ml).
